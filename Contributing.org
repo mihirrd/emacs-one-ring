@@ -1,0 +1,14 @@
+#+title: Contributing Guide
+* Guidelines and Process
+This repository is a fork of a public project, [[https://gitlab.com/apavaskar/emax][Emax]]. We pull public
+updates from this upstream. Internal contributions are expected to be pulled from Gerrit.
+
+If you want to contribute to the project and your changes are suitable
+for a wider audience, please raise a PR on the Gitlab project
+mentioned above.
+
+If you want to contribute to this project and your changes are
+Helpshift specific, please push your changes to Gerrit on a feature
+branch and once the reviews are completed and the branch is ready, it
+will be manually merged into master by the maintainer, Apurva
+Pavaskar.

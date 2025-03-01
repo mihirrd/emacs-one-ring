@@ -1,0 +1,97 @@
+#+title: Quickstart Guide
+* Introduction
+This guide is for anyone looking to try this configuration or a part
+of it, before learning about Emacs basics or a specific
+feature/package completely.
+* Note for existing Emacs users
+If you are looking to just try this configuration, you can use the
+built-in CLI option ~--init-directory~, available since Emacs 29. You
+don't need to replace your existing ~~/.config/emacs~ directory.
+
+#+begin_src shell
+  emacs --init-directory=~/code/one-ring
+#+end_src
+* Basic Concepts
+** Emacs
+The easiest and quickest way to get started is to go through the
+built-in tutorial. It can be accessed via the menubar (Help → Emacs
+Tutorial) or by using the keyboard shortcut: ~C-h t~ .This notation
+refers to the following sequence: Hold ~Control~, Press ~h~, release both
+keys and Press ~t~.
+
+If you want to skip the tutorial (not recommended), please see the
+following tips:
+- /Use/ arrow and navigation keys
+- /Use/ the menubar and the mouse
+- Press Control and 'g' to /cancel/ any action or keyboard shortcut
+- Partially entered keyboard shortcuts, messages and some more
+  information is usually visible in the /lower left corner/
+- The 'line' of information at the bottom is called the /modeline/.
+- A /buffer/ is an Emacs Lisp data structure, used for storing text. It
+  usually is synonymous with 'tabs'/'files' in most other text editors
+- /Press/ 'Alt' (known as 'Meta' in Emacs) and 'x' to run _any_
+  interactive function in Emacs
+** Org Mode
+This is a literate configuration for Emacs. This means that comments
+and code are inverted. This is useful for documentation oriented code.
+
+The entire configuration can be read through without needing to know
+orgmode at all. But if editing or extending the configuration is the
+goal, basic org mode know-how is a must. A small overview is provided below:
+
+- Org mode is primarily an outliner
+  - One can create headings and add content under them
+  - These headings can also be easily moved around with the help of a
+    few keyboard shortcuts
+
+- Org mode provides the ability to add source code blocks
+  - These blocks can also be executed to produce an inline output
+  - Or, all source blocks from an org file can be extracted to another
+    file. This is known as 'tangling'.
+  - New configuration can be added in any new source block with the
+    language as 'emacs-lisp', or it can be added in any of the
+    existing source code blocks.
+* Quick start
+** Buffers
+- The standard Emacs shortcut, ~C-x b~ can be used used for switching
+  buffers, but ~helm-mini~, bound to ~C-x C-b~, is more useful when
+  switching buffers, as it also:
+  - lists the recent files
+  - works for buffer isolation, in conjunction with the 'perspective'
+    package, as mentioned below.
+** Perspectives
+- The main keybinding is bound to ~<F8>~ by default
+- Perspectives are essentially virtual desktops in Emacs.
+  - Like virtual desktops in GNU/Linux, it is a powerful feature to have
+    for your development environment.
+  - Each perspective isolates buffers from the ones in other
+    perspectives. Buffers can also be added to and removed manually.
+- The easiest and most powerful use-case for perspectives, is when it
+  is used in conjuction with the package ~projectile~ (via the package
+  ~persp-projectile~)
+  - This makes it easy, for working on multiple
+    repositories at once.
+- Perspectives can also be saved to, and loaded from, disk.
+  - This is very helpful for preserving all open files and their
+    window positions across Emacs sessions.
+** Projects
+- The package ~projectile~ or the in-built package ~project~, provide help
+  when working on 'projects'.
+- This is similar to Projects in some other text editors where
+  utilities are provided for working on files across the entire
+  project.
+- Examples include searching for files across the project, searching
+  and replacing any string, etc..
+** Clojure (CIDER mode)
+*** Connect to a running/existing nREPL server
+- This is for the cases when a REPL is started in the terminal or when
+  another process starts it automatically (eg: services running on
+  sandboxes)
+- This can be achieved using ~C-c M-c~ (~cider-connect-clj~)
+- Quitting Emacs or a crash won't affect the REPL because the process
+  for the REPL is started independently of Emacs.
+*** Starting and connecting to an nREPL server
+- This is when one wants to start a new REPL and connect to it
+  immediately from Emacs
+- This can be done using ~C-c M-j~ (~cider-jack-in-clj~)
+- If Emacs is closed or it exits, the process for the REPL is also killed.

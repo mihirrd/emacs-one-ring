@@ -1,0 +1,641 @@
+* *Emax*
+Why a new 'starter-kit'?
+There are various reasons which prompted the creation of this
+configuration, but the core goal of this project is to provide Emacs
+beginners with a decent starting point to create and/or maintain their
+own configuration.
+
+This kit focuses on the following aspects:
+- A basic configuration which provides popular defaults, improves
+  usability with packages that provide visual cues for various
+  functionality, fuzzy searching and filtering.
+- A guided, documented configuration, which will help beginners
+  explore Emacs' features and packages.
+** Requirements
+*** Dependencies
+The minimum Emacs version required to use this configuration is
+version 29, which is the current stable release as of writing this
+document.
+
+Other dependencies include:
+- ripgrep
+- clojure-lsp
+*** Knowledge
+To properly utilize this configuration:
+- Emacs basics are a must. If you are just starting out with Emacs,
+  please follow the tutorial by pressing ~Ctrl+h~ and then ~t~ [ ~C-h t~ ]
+- One must know basic Emacs Lisp, to modify and customize this
+  configuration.
+- Knowing the basics of [[https://orgmode.org/][org-mode]] makes things easier.
+* *Configuration*
+- The configuration starts from here, and is a [[https://en.wikipedia.org/wiki/Literate_programming][literate configuration]],
+  due to the heavy focus on documentation.
+- This project is currently a work in progress. Final release will be
+  more polished for daily use.
+- ~:disabled t~ in a ~use-package~ expression disables that package, and
+  it won't be installed directly.  This is intended, as not all
+  packages are suitable for a beginner.  But this way, the
+  configuration for them is included while being a recommendation for
+  the package itself, and how it can be used.
+
+*Initialization and how this configuration works:*
+The following line of code is present in the ~init.el~ file:
+~(org-babel-load-file (expand-file-name "~/.config/emacs/config.org"))~
+It extracts all of the source code blocks from this file and adds them
+to a new file, ~config.el~, and then loads that file during startup.
+
+One can add a new code block using ~C-c C-, s~ and specifying ~emacs-lisp~
+as the language, similar to the rest of the code blocks in this file.
+* Package archives
+Please check ~early-init.el~ for this.
+* UI
+** Line numbers
+For people that prefer having line numbers and for pair programming.
+#+begin_src emacs-lisp
+  (global-display-line-numbers-mode 1)
+#+end_src
+** Dashboard
+#+begin_src emacs-lisp
+  (use-package dashboard
+    :ensure dashboard
+    :config (dashboard-setup-startup-hook)
+    (setq dashboard-items '((recents . 15))
+          dashboard-startup-banner (expand-file-name "Emax.png" user-emacs-directory)
+          dashboard-banner-logo-title "Welcome to Emax!"
+          dashboard-center-content t))
+
+  ;; (setq dashboard-display-icons-p t) ;; display icons on both GUI and terminal
+  ;; (setq dashboard-icon-type 'nerd-icons) ;; use `nerd-icons' package
+#+end_src
+** Icon packages
+One can add any of the following packages to add more flair to their
+config.
+*** all-the-icons
+*** all-the-icons-dired
+*** nerd-icons
+** Modeline
+A better theme and more information on the modeline.
+Moody vs doom-modeline
+#+begin_src emacs-lisp
+  (use-package moody
+    :ensure moody
+    :config
+    (setq x-underline-at-descent-line t)
+    (moody-replace-mode-line-buffer-identification)
+    (moody-replace-vc-mode)
+    (moody-replace-eldoc-minibuffer-message-function)
+    (column-number-mode))
+#+end_src
+
+Also hide all the minor modes, while keeping them available through a
+menu, to avoid clutter:
+#+begin_src emacs-lisp
+  (use-package minions
+    :config (minions-mode))
+#+end_src
+** Themes
+#+begin_src emacs-lisp
+  (use-package solo-jazz-theme :defer t)
+  (use-package night-owl-theme :defer t)
+  (use-package kaolin-themes :defer t)
+  (use-package majapahit-themes :defer t)
+  ;; Doom Solarized themes
+
+  (load-theme 'modus-vivendi)
+#+end_src
+** Fonts
+Set up your favorite font!
+
+There are multiple ways to do this. One of them is potrayed below:
+#+begin_src emacs-lisp
+  ;; (set-frame-font "Cascadia Code-16:weight=normal" t t)
+#+end_src
+** Parens
+Either matching parenthesis or the region they encompass can be
+highlighted.  This is controlled using the ~show-paren-style~ variable.
+
+Additional packages can be added, to customize behavior of syntax
+highlighting related to parenthesis or the region that they surround.
+[rainbow-delimiters, prism, highlight-blocks, rainbow-blocks,
+emacs-hl-block-mode, etc.]
+#+begin_src emacs-lisp
+  (use-package paren
+    :ensure nil
+    :init (setq show-paren-delay 0
+                ;; show-paren-style 'expression
+                )
+    :config (show-paren-mode))
+#+end_src
+*** ~rainbow-delimiters~
+As mentioned above, this is one of the packages that can make working
+with balanced parenthesis easier. It colors parenthesis differently,
+at different levels of nesting.
+#+begin_src emacs-lisp
+  (use-package rainbow-delimiters
+    :hook (prog-mode . rainbow-delimiters-mode))
+#+end_src
+** Which-key
+A dynamic reference for keybindings.
+#+begin_src emacs-lisp
+  (use-package which-key
+    :init (setq which-key-idle-delay 0.1)
+    :config (which-key-mode)
+    (setq which-key-popup-type 'side-window
+          which-key-side-window-location 'bottom))
+#+end_src
+** Helpful
+Better help buffers, which include more and useful information.
+#+begin_src emacs-lisp
+  (use-package helpful
+    :defer t
+    :bind (("C-h f" . helpful-callable)
+           ("C-h v" . helpful-variable)
+           ("C-h k" . helpful-key)
+           :map helpful-mode-map
+           ("q" . kill-buffer-and-window)))
+#+end_src
+** Goggles
+This package is currently not working due to some issue.
+#+begin_src emacs-lisp
+  (use-package goggles
+    :disabled t
+    :defer t
+    :hook (prog-mode text-mode)
+    :config (setq-default goggles-pulse nil))
+#+end_src
+* Completion
+** Company
+This package provides a modular completion framework for Emacs.
+From [[https://company-mode.github.io/][company-mode's homepage]]:
+#+begin_quote
+Company is a text completion framework for Emacs. The name stands for
+"complete anything".  It uses pluggable back-ends and front-ends to
+retrieve and display completion candidates.
+#+end_quote
+#+begin_src emacs-lisp
+  (use-package company
+    :demand t
+    :config (setq company-minimum-prefix-length 1
+                  company-idle-delay 0
+                  company-echo-delay 0
+                  company-selection-wrap-around t
+                  company-tooltip-align-annotations t
+                  company-dabbrev-ignore-case t
+                  company-dabbrev-downcase nil
+                  company-global-modes '(not shell-mode eaf-mode))
+    (global-company-mode 1))
+#+end_src
+** Helm
+From the [[https://emacs-helm.github.io/helm/][Helm website]]:
+#+begin_quote
+Helm is an Emacs framework for incremental completions and narrowing
+selections.
+#+end_quote
+
+Helm is a powerful package that provides a framework for
+auto-completion and allows one to pick a candidate out of a list of
+potential completions or selections.
+
+As it is a framework, there is a variety of packages available that
+work alongside Helm and provide a comprehensive experience.
+
+The main advantage of Helm is that it allows for fuzzy completion,
+which is very powerful and fast. It is also very easy for a beginner
+to use when compared to the built-in system for selection and
+completion.
+#+begin_src emacs-lisp
+  (use-package helm
+    :bind (("M-x"     . helm-M-x)
+           ("M-y"     . helm-show-kill-ring)
+           ("C-x C-b" . helm-mini)
+           ("C-x C-f" . helm-find-files)
+           ("C-x r b" . helm-filtered-bookmarks))
+    :config
+    (setq helm-input-idle-delay                     0.01
+          helm-reuse-last-window-split-state        t
+          helm-always-two-windows                   t
+          helm-split-window-inside-p                nil
+          helm-actions-inherit-frame-settings       t
+          helm-show-action-window-other-window      'left
+          helm-allow-mouse                          t
+          helm-move-to-line-cycle-in-source         t
+          helm-buffer-max-length 70
+          helm-follow-mode-persistent               t)
+    (add-to-list 'helm-sources-using-default-as-input 'helm-source-info-bash)
+    (helm-mode 1))
+#+end_src
+* Basic packages
+** Setup defaults
+Setup some basic default options, as the default values for them can
+be quite jarring for Emacs beginners.
+#+begin_src emacs-lisp
+  (setq-default blink-cursor-mode nil
+                cursor-type 'bar
+                echo-keystrokes 0.02
+                ediff-window-setup-function 'ediff-setup-windows-plain
+                frame-resize-pixelwise t
+                indent-tabs-mode nil
+                inhibit-compacting-font-caches t
+                initial-scratch-message nil
+                load-prefer-newer t
+                make-backup-files nil
+                read-process-output-max (* 1024 1024)
+                recentf-max-menu-items 200
+                recentf-max-saved-items 200
+                ring-bell-function 'ignore
+                save-interprogram-paste-before-kill t
+                tab-width 4
+                use-dialog-box nil
+                use-package-compute-statistics t
+                use-package-verbose t
+                window-combination-resize t)
+
+  (setq scroll-margin 0
+        scroll-conservatively 10000
+        scroll-up-aggressively 0.01
+        scroll-down-aggressively 0.01
+        scroll-preserve-screen-position t)
+  (pixel-scroll-precision-mode)
+
+  (fset 'yes-or-no-p 'y-or-n-p)
+  (size-indication-mode 1)
+  (global-hl-line-mode)
+  (eval-after-load 'dash '(global-dash-fontify-mode))
+  (save-place-mode)
+  (prefer-coding-system        'utf-8)
+  (set-language-environment    'utf-8)
+  (set-default-coding-systems  'utf-8)
+  (set-terminal-coding-system  'utf-8)
+  (set-selection-coding-system 'utf-8)
+  (put 'narrow-to-region 'disabled nil)
+  (add-to-list 'default-frame-alist '(fullscreen . maximized))
+#+end_src
+** Dump custom variables to a file, but don't load them
+#+begin_src emacs-lisp
+  (use-package cus-edit
+  :ensure nil
+  :config
+  (setq custom-file (expand-file-name "custom.el" user-emacs-directory)))
+#+end_src
+** Autorevert buffers
+Built-in mode that replaces the text in the current buffer with the
+text of the visited file on disk.
+#+begin_src emacs-lisp
+  (use-package autorevert
+    :ensure nil
+    :config (setq auto-revert-interval 2
+                  auto-revert-check-vc-info t
+                  global-auto-revert-non-file-buffers t)
+    (global-auto-revert-mode))
+#+end_src
+** Dired
+Built-in file-manager.
+#+begin_src emacs-lisp
+  (use-package dired
+    :ensure nil
+    :init (setq-default dired-listing-switches "-alht")
+    :bind (:map dired-mode-map
+                ("q" . #'kill-current-buffer))
+    :config (setq delete-by-moving-to-trash t
+                  dired-recursive-copies 'always
+                  dired-kill-when-opening-new-dired-buffer t))
+#+end_src
+** Eldoc
+Built-in mode.
+#+begin_src emacs-lisp
+  (use-package eldoc
+    :ensure nil
+    :config (setq eldoc-idle-delay 0.2)
+    (global-eldoc-mode))
+#+end_src
+** Perspective
+Perspective mode creates perspectives, which are similar to virtual
+desktops.
+#+begin_src emacs-lisp
+  (use-package perspective
+    ;; :init (persp-mode)
+    :demand t
+    :custom (persp-mode-prefix-key (kbd "<f8>"))
+    :bind ("<f8><f8>" . persp-switch-last)
+    :config (setq persp-initial-frame-name "def"
+                  persp-sort 'created
+                  persp-show-modestring 'header
+                  persp-state-default-file (expand-file-name "layout/default" user-emacs-directory)
+                  persp-modestring-dividers '("[" "]" "·"))
+    (set-face-attribute 'persp-selected-face nil :height 1.2 :italic t)
+    (persp-mode))
+#+end_src
+** Try any package temporarily
+One can use ~M-x try~ and try out a package for the active duration of
+the current Emacs process. The package is not installed and is not
+available after restarting Emacs.
+#+begin_src emacs-lisp
+  (use-package try :defer t)
+#+end_src
+** Automatically keeping packages up to date
+This package asks whether all packages should be updated or not, on
+startup [when updates are available].
+#+begin_src emacs-lisp
+  (use-package auto-package-update
+    :config (setq auto-package-update-delete-old-versions t
+                  auto-package-update-prompt-before-update t)
+    (auto-package-update-maybe))
+#+end_src
+* Navigation
+** Move where I mean
+Better navigation to jump between the absolute beginning of a line or
+beginning of text on the line, and between end of the line or the end
+of a comment [in code].
+
+The following code remaps ~C-a~ and ~<home>~ to ~mwim-beginning~; and ~C-e~
+and ~<end>~ to ~mwim-end~.
+#+begin_src emacs-lisp
+  (use-package mwim
+    :bind (([remap move-beginning-of-line] . mwim-beginning)
+           ([remap move-end-of-line] . mwim-end)))
+#+end_src
+** winner-mode
+This package provides 'undo' and 'redo' functionality for window
+configurations.
+#+begin_src emacs-lisp
+  (use-package winner-mode
+    :ensure nil
+    :hook (after-init . winner-mode))
+#+end_src
+* Editing
+** undo-tree
+Emacs' undo/redo system is very powerful, and is not like the standard
+undo/redo system in most software where past states are lost after a
+redo. Emacs' undo/redo is non-linear, which allows one to reach any
+past state of the buffer. But this comes at a cost: it is unintuitive
+to use as it ships with Emacs.
+
+This package draws the undo state tree visually, and allows one to
+traverse it easily. More documentation is available on the [[https://elpa.gnu.org/packages/undo-tree.html][elpa page]]
+for this package.
+#+begin_src emacs-lisp
+  (use-package undo-tree
+    :config (setq undo-tree-visualizer-timestamps t
+                  undo-limit 80000000
+                  undo-strong-limit 12000000
+                  undo-outer-limit 120000000
+                  undo-tree-auto-save-history nil
+                  undo-tree-visualizer-diff t)
+    (global-undo-tree-mode))
+#+end_src
+** anzu
+~query-replace~ and ~query-replace-regexp~ are very useful functions in
+Emacs. But they don't have good usability out of the box. This package
+visually displays what is being replaced with what, and it also
+displays the count of matches in the modeline.
+#+begin_src emacs-lisp
+  (use-package anzu
+    :defer t
+    :config (global-anzu-mode)
+    :bind (([remap query-replace] . anzu-query-replace)
+           ([remap query-replace-regexp] . anzu-query-replace-regexp)))
+#+end_src
+** iedit
+#+begin_src emacs-lisp
+  (use-package iedit)
+#+end_src
+** expand-region
+Expand the marked region by semantic units. One can also contract it
+if required. This allows for quickly marking a desired region.
+#+begin_src emacs-lisp
+  (use-package expand-region
+    :defer t
+    :bind ("C-c e" . er/expand-region)
+    :config (setq expand-region-contract-fast-key "u"
+                  expand-region-reset-fast-key    "i"))
+#+end_src
+** mulitple-cursors
+#+begin_src emacs-lisp
+  (use-package multiple-cursors
+    :disabled t
+    :defer t
+    :hook (after-init . multiple-cursors-mode)
+    :bind (("C-c C->" . mc/edit-lines)
+           ("C->"     . mc/mark-next-like-this)
+           ("C-<"     . mc/mark-previous-like-this)
+           ("C-c C-<" . mc/mark-all-like-this)))
+#+end_src
+** fancy-narrow
+#+begin_src emacs-lisp
+  (use-package fancy-narrow
+    :disabled t
+    :config (fancy-narrow-mode))
+#+end_src
+** zzz-to-char
+#+begin_src emacs-lisp
+  (use-package zzz-to-char
+    :disabled t
+    :config (global-set-key (kbd "M-z") #'zzz-to-char-up-to-char))
+#+end_src
+** yasnippet
+Snippet completion.
+#+begin_src emacs-lisp
+  (use-package yasnippet
+    :disabled t
+    :defer t
+    :config
+    (yas-reload-all)
+    (yas-global-mode)
+
+    (use-package yasnippet-snippets
+      :after yasnippet)
+
+    :bind (("C-c s" . yas-insert-snippet)))
+#+end_src
+* Org
+** org-mode
+#+begin_src emacs-lisp
+  (use-package org
+    :ensure t
+    :defer t
+    :init
+    (defun emax|org-buffer-files
+        ()
+      (mapcar #'buffer-file-name (org-buffer-list 'files)))
+
+    (add-hook 'org-mode-hook #'visual-line-mode)
+    (add-hook 'org-mode-hook #'org-indent-mode)
+    ;; :hook
+    ;; (org-mode . visual-line-mode)
+    ;; (org-mode . org-indent-mode)
+    :mode ("\\.org\\'" . org-mode)
+    :config (setq org-src-window-setup 'current-window
+                  org-refile-use-outline-path t
+                  org-outline-path-complete-in-steps nil
+                  org-refile-allow-creating-parent-nodes 'confirm
+                  org-refile-targets '((nil :maxlevel . 9)
+                                       (emax|org-buffer-files :maxlevel . 9)
+                                       (org-agenda-files :maxlevel . 9))
+                  org-pretty-entities t
+                  org-hide-emphasis-markers t
+                  org-agenda-files '("~/org/agenda/")
+                  org-log-done 'time
+                  ;; org-todo-keywords '((sequence ""))
+                  ;; org-todo-keyword-faces '()
+                  org-priority-faces
+                  '((?A :foreground "#e61f44") ;;(65 :foreground "#")
+                    (?B :foreground "#1ea8fc")
+                    (?C :foreground "#a7da1e"))
+                  ;; org-support-shift-select t
+                  org-default-notes-file "~/org/notes.org"
+                  org-list-allow-alphabetical t
+                  org-startup-with-inline-images t
+                  org-startup-align-all-tables t
+                  org-catch-invisible-edits 'smart
+                  org-return-follows-link nil
+                  org-ellipsis " ⤵"
+                  org-src-tab-acts-natively t
+                  org-enforce-todo-dependencies t
+                  org-enforce-todo-checkbox-dependencies t
+                  org-fontify-whole-heading-line t
+                  org-fontify-done-headline t
+                  org-table-use-standard-references t)
+
+    (advice-add 'org-agenda-switch-to :after #'recenter-top-bottom)
+
+    :bind (("C-c a" . org-agenda)
+           ("C-c c" . org-capture)
+           ("C-c S" . org-store-link)))
+#+end_src
+** org-superstar
+These are fancy bullets for org-mode outlines. If you prefer to hide
+them instead, uncomment the line below where
+~org-superstar-headline-bullets-list~ is set to a ~SPC~ character.
+#+begin_src emacs-lisp
+  (use-package org-superstar
+    :defer t
+    :hook (org-mode . org-superstar-mode)
+    :config (setq org-hide-leading-stars nil
+                  org-superstar-item-bullet-alist '((43 . 10148)
+                                                    (45 . 8226))
+                  ;; Set the following to hide all the stars:
+                  ;; org-superstar-headline-bullets-list '(" ")
+                  org-superstar-leading-bullet ?\s
+                  org-indent-mode-turns-on-hiding-stars nil)
+    ;; (set-face-attribute 'org-superstar-header-bullet nil :inherit 'variable-pitched :height 180)
+    (org-superstar-mode 1))
+#+end_src
+** org-cliplink
+#+begin_src emacs-lisp
+  (use-package org-cliplink :defer t)
+#+end_src
+** org-roam
+*** org-roam-ui
+** org-babel
+#+begin_src emacs-lisp
+  (setq org-babel-clojure-backend 'cider)
+
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((emacs-lisp . t)
+     (clojure    . t)
+     (shell      . t)))
+#+end_src
+* Programming
+** Projectile
+Handle "Projects" in Emacs.
+#+begin_src emacs-lisp
+  (use-package projectile
+    :bind-keymap ("C-c p" . projectile-command-map)
+    :config (setq projectile-enable-caching t
+                  projectile-completion-system 'helm
+                  projectile-switch-project-action 'helm-projectile)
+    (projectile-mode))
+#+end_src
+*** Perspective + Projectile
+Open any "Project" in a separate Perspective, for easy organization.
+#+begin_src emacs-lisp
+  (use-package helm-projectile
+    :config (helm-projectile-on)
+    (use-package persp-projectile
+      :after helm-projectile
+      :bind ([remap projectile-switch-project] . 'projectile-persp-switch-project)))
+#+end_src
+** LSP mode
+#+begin_src emacs-lisp
+  (use-package lsp-mode
+    :init (setq lsp-keymap-prefix "C-c l")
+    :hook ((lsp-mode . lsp-enable-which-key-integration))
+    :commands (lsp-mode))
+#+end_src
+** Magit
+#+begin_src emacs-lisp
+  (use-package magit
+    :defer t
+    :bind ("C-x g" . magit-status))
+#+end_src
+** Paredit
+#+begin_src emacs-lisp
+  (use-package paredit
+    :defer t
+    :hook ((emacs-lisp-mode clojure-mode cider-mode lisp-mode) . paredit-mode))
+#+end_src
+** Search
+#+begin_src emacs-lisp
+  (use-package ripgrep :defer t)
+  (use-package projectile-ripgrep :defer t)
+  (use-package deadgrep :defer t)
+
+  (use-package helm-rg
+    :defer t
+    :bind ("C-c y" . helm-rg))
+#+end_src
+** Flycheck
+#+begin_src emacs-lisp
+  (use-package flycheck
+    :init (global-flycheck-mode)
+    :config (setq flycheck-display-errors-function #'flycheck-display-error-messages-unless-error-list))
+#+end_src
+** Miscellaneous packages
+#+begin_src emacs-lisp
+  (use-package json-mode :defer t)
+  (use-package yaml-mode :defer t)
+
+  (use-package nginx-mode
+    :mode ("/nginx/sites-\\(?:available\\|enabled\\)/" . nginx-mode))
+#+end_src
+** Clojure
+#+begin_src emacs-lisp
+  (use-package flycheck-clj-kondo
+    :defer t)
+
+  (use-package clojure-mode
+    :hook ((clojure-mode . cider-mode)
+           (clojure-mode . lsp-mode))
+    :mode ("\\.clj\\'" . clojure-mode)
+    :config (require 'flycheck-clj-kondo)
+    (setq lsp-enable-indentation nil
+          lsp-enable-completion-at-point nil))
+
+  (use-package cider
+    :hook (clojure-mode . cider-mode)
+    :config (setq cider-jump-to-pop-to-buffer-actions '((display-buffer-reuse-window
+                                                         display-buffer-same-window
+                                                         display-buffer-in-child-frame))
+                  cider-repl-prompt-function '(lambda (ns)
+                                                (format "%s--------------------------------------------------\n" ns))
+                  cider-dynamic-indentation nil))
+
+  (use-package clj-refactor
+    :after cider-mode
+    :hook (cider-mode . clj-refactor-mode)
+    :config (clj-refactor-mode 1)
+    (setq cljr-warn-on-eval nil)
+    (cljr-add-keybindings-with-prefix "C-c C-m"))
+
+  (use-package kibit-helper
+    :defer t)
+
+  (use-package helm-clojuredocs
+    :defer t)
+#+end_src
+* End of configuration
+#+begin_src emacs-lisp
+  (provide 'config)
+  ;;; config.el ends here
+#+end_src
