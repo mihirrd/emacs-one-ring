@@ -1,0 +1,3 @@
+* Installing Emacs
+brew tap d12frosted/emacs-plus
+https://github.com/d12frosted/homebrew-emacs-plus

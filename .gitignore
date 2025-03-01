@@ -19,3 +19,5 @@ config-current-theme.el
 /eln-cache/
 config.el
 /places
+/elpy
+/projects
