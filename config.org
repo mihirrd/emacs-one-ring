@@ -98,17 +98,16 @@ menu, to avoid clutter:
   (use-package solo-jazz-theme :defer t)
   (use-package night-owl-theme :defer t)
   (use-package kaolin-themes :defer t)
-  (use-package majapahit-themes :defer t)
   ;; Doom Solarized themes
 
-  (load-theme 'modus-vivendi)
+  (load-theme 'kaolin-dark t)
 #+end_src
 ** Fonts
 Set up your favorite font!
 
 There are multiple ways to do this. One of them is potrayed below:
 #+begin_src emacs-lisp
-  ;; (set-frame-font "Cascadia Code-16:weight=normal" t t)
+  (set-frame-font "Hack-16:weight=thin" t t)
 #+end_src
 ** Parens
 Either matching parenthesis or the region they encompass can be
