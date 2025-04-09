@@ -528,15 +528,19 @@ them instead, uncomment the line below where
 ** org-roam
 *** org-roam-ui
 ** org-babel
++ Guide for python : [[https://orgmode.org/worg/org-contrib/babel/languages/ob-doc-python.html][Python source code blocks]]
 #+begin_src emacs-lisp
   (setq org-babel-clojure-backend 'cider)
+  (setq org-babel-python-command "python3")
 
   (org-babel-do-load-languages
    'org-babel-load-languages
    '((emacs-lisp . t)
      (clojure    . t)
+     (python     . t)
      (shell      . t)))
 #+end_src
+
 * Programming
 ** Projectile
 Handle "Projects" in Emacs.
