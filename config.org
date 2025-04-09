@@ -96,18 +96,20 @@ menu, to avoid clutter:
 ** Themes
 #+begin_src emacs-lisp
   (use-package solo-jazz-theme :defer t)
+  (use-package monokai-pro-theme :defer t)
   (use-package night-owl-theme :defer t)
   (use-package kaolin-themes :defer t)
+  (use-package doom-themes :defer t)
   ;; Doom Solarized themes
 
-  (load-theme 'kaolin-dark t)
+  (load-theme 'doom-material-dark t)
 #+end_src
 ** Fonts
 Set up your favorite font!
 
 There are multiple ways to do this. One of them is potrayed below:
 #+begin_src emacs-lisp
-  (set-frame-font "Hack-16:weight=thin" t t)
+  (set-frame-font "M PLUS Code Latin-20" t t)
 #+end_src
 ** Parens
 Either matching parenthesis or the region they encompass can be
@@ -635,9 +637,13 @@ Open any "Project" in a separate Perspective, for easy organization.
 #+end_src
 * Python DEV
 #+begin_src emacs-lisp
-  (use-package 'elpy :defer t)
-  (use-package 'pyenv-mode :defer t)
-  (use-package 'jedi :defer t)
+  (use-package elpy
+    :ensure t
+    :defer t
+    :init
+    (advice-add 'python-mode :before 'elpy-enable))
+  
+    (use-package 'pyenv-mode :defer t)
 #+end_src
 * End of configuration
 #+begin_src emacs-lisp

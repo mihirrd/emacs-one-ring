@@ -4,6 +4,7 @@
 /eshell/
 /recentf
 /url/
+/workspace/
 /transient/
 /projectile.cache
 /projectile-bookmarks.eld
@@ -17,7 +18,6 @@ config-current-theme.el
 /tramp/
 /multisession/
 /eln-cache/
-config.el
+/config.el
 /places
 /elpy
-/projects
