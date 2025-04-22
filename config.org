@@ -649,6 +649,14 @@ Open any "Project" in a separate Perspective, for easy organization.
   
     (use-package 'pyenv-mode :defer t)
 #+end_src
+* MISC
+#+begin_src emacs-lisp
+  ;; Avoids changing the font when scrolling
+  (global-set-key (kbd "<pinch>") 'ignore)
+  (global-set-key (kbd "<C-wheel-up>") 'ignore)
+  (global-set-key (kbd "<C-wheel-down>") 'ignore)
+#+end_src
+
 * End of configuration
 #+begin_src emacs-lisp
   (provide 'config)
