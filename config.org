@@ -655,6 +655,9 @@ Open any "Project" in a separate Perspective, for easy organization.
   (global-set-key (kbd "<pinch>") 'ignore)
   (global-set-key (kbd "<C-wheel-up>") 'ignore)
   (global-set-key (kbd "<C-wheel-down>") 'ignore)
+
+  ;; Vertial as the default window split
+  (setq split-width-threshold 1 )
 #+end_src
 
 * End of configuration
