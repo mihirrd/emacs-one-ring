@@ -639,82 +639,82 @@ Open any "Project" in a separate Perspective, for easy organization.
   (use-package helm-clojuredocs
     :defer t)
 #+end_src
-* Python DEV
+** Python DEV
 #+begin_src emacs-lisp
 
-  (use-package python
-    :ensure nil
-    :mode ("\\.py\\'" . python-mode)
-    :hook ((python-mode . lsp)
-           (python-mode . electric-pair-mode)
-           (python-mode . company-mode)
-           (python-mode . flycheck-mode)
-           (python-mode . blacken-mode)))
+    (use-package python
+      :ensure nil
+      :mode ("\\.py\\'" . python-mode)
+      :hook ((python-mode . lsp)
+             (python-mode . electric-pair-mode)
+             (python-mode . company-mode)
+             (python-mode . flycheck-mode)
+             (python-mode . blacken-mode)))
 
-  ;; LSP support via pyright
-  (use-package lsp-mode
-    :commands (lsp lsp-deferred)
-    :hook (python-mode . lsp-deferred)
-    :custom
-    (lsp-enable-on-type-formatting nil)
-    (lsp-prefer-capf t)
-    (lsp-idle-delay 0.3)
-    (lsp-pyright-auto-import-completions t)
-    (lsp-pyright-use-library-code-for-types t)
-    (lsp-headerline-breadcrumb-enable t)
-    (lsp-enable-symbol-highlighting t)
-    (lsp-modeline-diagnostics-enable t)
-    (lsp-completion-provider :capf))
+    ;; LSP support via pyright
+    (use-package lsp-mode
+      :commands (lsp lsp-deferred)
+      :hook (python-mode . lsp-deferred)
+      :custom
+      (lsp-enable-on-type-formatting nil)
+      (lsp-prefer-capf t)
+      (lsp-idle-delay 0.3)
+      (lsp-pyright-auto-import-completions t)
+      (lsp-pyright-use-library-code-for-types t)
+      (lsp-headerline-breadcrumb-enable t)
+      (lsp-enable-symbol-highlighting t)
+      (lsp-modeline-diagnostics-enable t)
+      (lsp-completion-provider :capf))
 
-  ;; Install pyright LSP client
-  (use-package lsp-pyright
-    :after lsp-mode
-    :hook (python-mode . (lambda () (require 'lsp-pyright)))
-    :custom (lsp-pyright-typechecking-mode "basic"))
+    ;; Install pyright LSP client
+    (use-package lsp-pyright
+      :after lsp-mode
+      :hook (python-mode . (lambda () (require 'lsp-pyright)))
+      :custom (lsp-pyright-typechecking-mode "basic"))
 
-  ;; Company mode for autocompletion
-  (use-package company
-    :diminish
-    :custom
-    (company-idle-delay 0.2)
-    (company-minimum-prefix-length 1)
-    (company-tooltip-align-annotations t)
-    :hook (after-init . global-company-mode))
+    ;; Company mode for autocompletion
+    (use-package company
+      :diminish
+      :custom
+      (company-idle-delay 0.2)
+      (company-minimum-prefix-length 1)
+      (company-tooltip-align-annotations t)
+      :hook (after-init . global-company-mode))
 
-  ;; Flycheck for real-time linting
-  (use-package flycheck
-    :init (global-flycheck-mode))
+    ;; Flycheck for real-time linting
+    (use-package flycheck
+      :init (global-flycheck-mode))
 
-  ;; Black formatter on save
-  (use-package blacken
-    :diminish
-    :custom (blacken-line-length 88))
+    ;; Black formatter on save
+    (use-package blacken
+      :diminish
+      :custom (blacken-line-length 88))
 
-  ;; LSP UI for VS Code-like popups and info
-  (use-package lsp-ui
-    :commands lsp-ui-mode
-    :custom
-    (lsp-ui-doc-enable t)
-    (lsp-ui-doc-delay 0.2)
-    (lsp-ui-doc-position 'at-point)
-    (lsp-ui-sideline-enable t)
-    (lsp-ui-sideline-show-code-actions t)
-    (lsp-ui-sideline-show-hover t))
+    ;; LSP UI for VS Code-like popups and info
+    (use-package lsp-ui
+      :commands lsp-ui-mode
+      :custom
+      (lsp-ui-doc-enable t)
+      (lsp-ui-doc-delay 0.2)
+      (lsp-ui-doc-position 'at-point)
+      (lsp-ui-sideline-enable t)
+      (lsp-ui-sideline-show-code-actions t)
+      (lsp-ui-sideline-show-hover t))
 
-  ;; Which-key for helpful keybinding hints
-  (use-package which-key
-    :diminish
-    :config (which-key-mode))
+    ;; Which-key for helpful keybinding hints
+    (use-package which-key
+      :diminish
+      :config (which-key-mode))
 
-  ;; Virtualenv support
-  (use-package pyvenv
-    :hook (python-mode . pyvenv-mode)
-    :config
-    (pyvenv-tracking-mode 1))
+    ;; Virtualenv support
+    (use-package pyvenv
+      :hook (python-mode . pyvenv-mode)
+      :config
+      (pyvenv-tracking-mode 1))
 
 #+end_src
 
-* Rust
+** Rust
 #+begin_src emacs-lisp
 
     ;; Rust major mode
@@ -754,7 +754,7 @@ Open any "Project" in a separate Perspective, for easy organization.
     :hook (rust-mode . cargo-minor-mode))
 #+end_src
 
-* MISC
+** MISC
 #+begin_src emacs-lisp
   ;; Avoids changing the font when scrolling
   (global-set-key (kbd "<pinch>") 'ignore)
