@@ -641,63 +641,76 @@ Open any "Project" in a separate Perspective, for easy organization.
 #+end_src
 * Python DEV
 #+begin_src emacs-lisp
-  ;; Python major mode (built-in)
-(use-package python
-  :ensure nil
-  :hook ((python-mode . lsp)
-         (python-mode . electric-pair-mode)
-         (python-mode . (lambda ()
-                          (setq tab-width 4))))
-  :custom
-  (python-shell-interpreter "python3"))
 
-;; LSP support (use pyright or pylsp)
-(use-package lsp-mode
-  :ensure t
-  :hook (python-mode . lsp)
-  :commands lsp
-  :custom
-  (lsp-pylsp-plugins-flake8-enabled t)
-  (lsp-pylsp-plugins-pylint-enabled nil)
-  (lsp-pylsp-plugins-autopep8-enabled nil)
-  (lsp-pylsp-plugins-black-enabled t) ;; Format with Black
-  (lsp-pylsp-plugins-mccabe-enabled nil)
-  (lsp-pylsp-plugins-pycodestyle-enabled nil)
-  (lsp-enable-on-type-formatting nil)
-  (lsp-prefer-flymake nil))
+  (use-package python
+    :ensure nil
+    :mode ("\\.py\\'" . python-mode)
+    :hook ((python-mode . lsp)
+           (python-mode . electric-pair-mode)
+           (python-mode . company-mode)
+           (python-mode . flycheck-mode)
+           (python-mode . blacken-mode)))
 
-;; LSP UI for in-buffer help, docs, etc.
-(use-package lsp-ui
-  :ensure t
-  :commands lsp-ui-mode)
+  ;; LSP support via pyright
+  (use-package lsp-mode
+    :commands (lsp lsp-deferred)
+    :hook (python-mode . lsp-deferred)
+    :custom
+    (lsp-enable-on-type-formatting nil)
+    (lsp-prefer-capf t)
+    (lsp-idle-delay 0.3)
+    (lsp-pyright-auto-import-completions t)
+    (lsp-pyright-use-library-code-for-types t)
+    (lsp-headerline-breadcrumb-enable t)
+    (lsp-enable-symbol-highlighting t)
+    (lsp-modeline-diagnostics-enable t)
+    (lsp-completion-provider :capf))
 
-;; Company for autocompletion
-(use-package company
-  :ensure t
-  :hook (prog-mode . company-mode)
-  :custom
-  (company-idle-delay 0.2)
-  (company-minimum-prefix-length 1))
+  ;; Install pyright LSP client
+  (use-package lsp-pyright
+    :after lsp-mode
+    :hook (python-mode . (lambda () (require 'lsp-pyright)))
+    :custom (lsp-pyright-typechecking-mode "basic"))
 
-;; Flycheck for syntax checking
-(use-package flycheck
-  :ensure t
-  :init (global-flycheck-mode))
+  ;; Company mode for autocompletion
+  (use-package company
+    :diminish
+    :custom
+    (company-idle-delay 0.2)
+    (company-minimum-prefix-length 1)
+    (company-tooltip-align-annotations t)
+    :hook (after-init . global-company-mode))
 
-;; Black for autoformatting (optional if not using lsp-based formatting)
-(use-package blacken
-  :ensure t
-  :hook (python-mode . blacken-mode)
-  :custom
-  (blacken-line-length 88))
+  ;; Flycheck for real-time linting
+  (use-package flycheck
+    :init (global-flycheck-mode))
 
-;; Virtualenv support
-(use-package pyvenv
-  :ensure t
-  :hook (python-mode . pyvenv-mode)
-  :config
-  (setq pyvenv-workon "your-venv-name") ;; optional, if using virtualenvwrapper
-  (pyvenv-tracking-mode 1))
+  ;; Black formatter on save
+  (use-package blacken
+    :diminish
+    :custom (blacken-line-length 88))
+
+  ;; LSP UI for VS Code-like popups and info
+  (use-package lsp-ui
+    :commands lsp-ui-mode
+    :custom
+    (lsp-ui-doc-enable t)
+    (lsp-ui-doc-delay 0.2)
+    (lsp-ui-doc-position 'at-point)
+    (lsp-ui-sideline-enable t)
+    (lsp-ui-sideline-show-code-actions t)
+    (lsp-ui-sideline-show-hover t))
+
+  ;; Which-key for helpful keybinding hints
+  (use-package which-key
+    :diminish
+    :config (which-key-mode))
+
+  ;; Virtualenv support
+  (use-package pyvenv
+    :hook (python-mode . pyvenv-mode)
+    :config
+    (pyvenv-tracking-mode 1))
 
 #+end_src
 
