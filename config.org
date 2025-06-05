@@ -760,6 +760,7 @@ Open any "Project" in a separate Perspective, for easy organization.
   (global-set-key (kbd "<pinch>") 'ignore)
   (global-set-key (kbd "<C-wheel-up>") 'ignore)
   (global-set-key (kbd "<C-wheel-down>") 'ignore)
+  (setq switch-to-buffer-obey-display-actions t)
 
   ;; Vertial as the default window split
   (setq split-width-threshold 1 )
