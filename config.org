@@ -109,8 +109,10 @@ Set up your favorite font!
 
 There are multiple ways to do this. One of them is potrayed below:
 #+begin_src emacs-lisp
-  (set-frame-font "M PLUS Code Latin-20" t t)
+  (set-face-attribute 'default nil :family "M PLUS Code Latin" :height 200 :weight 'light)
+  (set-face-attribute 'bold nil :weight 'semi-bold)
 #+end_src
+
 ** Parens
 Either matching parenthesis or the region they encompass can be
 highlighted.  This is controlled using the ~show-paren-style~ variable.
@@ -752,6 +754,49 @@ Open any "Project" in a separate Perspective, for easy organization.
   (use-package cargo
     :ensure t
     :hook (rust-mode . cargo-minor-mode))
+#+end_src
+
+** Java
+Java development via ~lsp-java~, which manages the Eclipse JDT Language Server
+automatically. JDT LS 1.57+ requires Java 21 to run the server process;
+~lsp-java-java-path~ points it at the Java 21 binary explicitly so the
+server JVM is independent of the project's target Java version.
+#+begin_src emacs-lisp
+  (use-package lsp-java
+    :ensure t
+    :after lsp-mode
+    :hook ((java-mode . lsp)
+           (java-mode . electric-pair-mode))
+    :config
+    (when (file-exists-p "/Library/Java/JavaVirtualMachines/temurin-21.jdk/Contents/Home/bin/java")
+      (setq lsp-java-java-path
+            "/Library/Java/JavaVirtualMachines/temurin-21.jdk/Contents/Home/bin/java"))
+    (setq lsp-java-vmargs
+          '("-XX:+UseParallelGC"
+            "-XX:GCTimeRatio=4"
+            "-XX:AdaptiveSizePolicyWeight=90"
+            "-Dsun.zip.disableMemoryMapping=true"
+            "-Xmx2G"
+            "-Xms100m")
+          lsp-java-save-actions-organize-imports t
+          lsp-java-completion-import-order '["java" "javax" "com" "org"]
+          lsp-java-format-settings-profile "GoogleStyle"
+          lsp-java-autobuild-enabled t
+          lsp-java-configuration-runtimes
+          (vconcat
+           (when (file-exists-p "/Library/Java/JavaVirtualMachines/temurin-21.jdk/Contents/Home")
+             '[(:name "JavaSE-21"
+                :path "/Library/Java/JavaVirtualMachines/temurin-21.jdk/Contents/Home"
+                :default t)])
+           '[(:name "JavaSE-17"
+              :path "/Library/Java/JavaVirtualMachines/temurin-17.jdk/Contents/Home")])))
+
+  (use-package dap-mode
+    :ensure t
+    :after lsp-mode
+    :config
+    (dap-auto-configure-mode)
+    (require 'dap-java))
 #+end_src
 
 ** MISC

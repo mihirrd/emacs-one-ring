@@ -12,6 +12,9 @@
 ;;
 ;;; Code:
 
+(setq user-emacs-directory
+      (file-name-directory (file-truename load-file-name)))
+
 ;; Disable menu-bar, as it can still be accessed via 'F10'.
 (menu-bar-mode -1)
 (tool-bar-mode -1)
@@ -19,7 +22,9 @@
 
 (setq custom-safe-themes t
       inhibit-startup-screen t
-      frame-inhibit-implied-resize t)
+      frame-inhibit-implied-resize t
+      native-comp-async-report-warnings-errors 'silent
+      ns-use-native-fullscreen nil)
 
 ;; One can download Emacs packages from various archives
 ;; (repositories). The following adds "MELPA" [a package archive] to
