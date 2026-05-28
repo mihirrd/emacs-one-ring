@@ -102,14 +102,12 @@ menu, to avoid clutter:
   (use-package doom-themes :defer t)
   ;; Doom Solarized themes
 
-  (load-theme 'doom-material-dark t)
+ (load-theme 'doom-material-dark t)
 #+end_src
-** Fonts
-Set up your favorite font!
 
-There are multiple ways to do this. One of them is potrayed below:
+** Fonts
 #+begin_src emacs-lisp
-  (set-face-attribute 'default nil :family "M PLUS Code Latin" :height 200 :weight 'light)
+  (set-face-attribute 'default nil :family "M PLUS Code Latin" :height 170)
   (set-face-attribute 'bold nil :weight 'semi-bold)
 #+end_src
 
