@@ -912,6 +912,43 @@ server JVM is independent of the project's target Java version.
   (setq split-width-threshold 1 )
 #+end_src
 
+** GitHub Copilot
+Install ~copilot.el~ from GitHub via ~quelpa~. Copilot provides inline
+ghost-text completions (like VS Code). Press ~Tab~ to accept, ~M-n~/~M-p~
+to cycle suggestions, and ~C-g~ to dismiss.
+
+Before first use run ~M-x copilot-login~ to authenticate with GitHub.
+#+begin_src emacs-lisp
+  (use-package quelpa
+    :ensure t
+    :custom (quelpa-update-melpa-p nil))
+
+  (use-package quelpa-use-package
+    :ensure t
+    :after quelpa)
+
+  (use-package copilot
+    :quelpa (copilot :fetcher github
+                     :repo "copilot-emacs/copilot.el"
+                     :branch "main"
+                     :files ("*.el" "dist"))
+    :hook (prog-mode . copilot-mode)
+    :bind (:map copilot-completion-map
+                ("<tab>"   . copilot-accept-completion)
+                ("TAB"     . copilot-accept-completion)
+                ("M-n"     . copilot-next-completion)
+                ("M-p"     . copilot-previous-completion)
+                ("M-f"     . copilot-accept-completion-by-word)
+                ("M-<return>" . copilot-accept-completion-by-line))
+    :config
+    ;; Prevent company-mode from triggering while Copilot overlay is visible
+    (with-eval-after-load 'company
+      (defun my/copilot-disable-company ()
+        (when copilot--overlay-keymap
+          (company-cancel)))
+      (add-hook 'copilot-display-overlay-hook #'my/copilot-disable-company)))
+#+end_src
+
 * End of configuration
 #+begin_src emacs-lisp
   (provide 'config)
