@@ -21,3 +21,8 @@ config-current-theme.el
 /config.el
 /places
 /elpy
+.cache/
+.dap-breakpoints
+.lsp-session-v1
+eclipse.jdt.ls/
+quelpa/
