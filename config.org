@@ -599,6 +599,24 @@ Open any "Project" in a separate Perspective, for easy organization.
     :init (global-flycheck-mode)
     :config (setq flycheck-display-errors-function #'flycheck-display-error-messages-unless-error-list))
 #+end_src
+** Markdown
+~markdown-mode~ with pandoc as the converter. ~markdown-live-preview-mode~
+renders to HTML via pandoc and displays it in a split EWW buffer inside Emacs.
+Toggle with ~C-c C-c p~.
+#+begin_src emacs-lisp
+  (use-package markdown-mode
+    :ensure t
+    :mode ("\\.md\\'" "\\.markdown\\'")
+    :hook (markdown-mode . markdown-toggle-markup-hiding)
+    :bind (:map markdown-mode-map
+                ("C-c C-c p" . markdown-live-preview-mode))
+    :config
+    (setq markdown-command '("pandoc" "--from=markdown" "--to=html5" "--standalone")
+          markdown-live-preview-window-function #'markdown-live-preview-window-eww
+          markdown-fontify-code-blocks-natively t
+          markdown-display-remote-images t))
+#+end_src
+
 ** Miscellaneous packages
 #+begin_src emacs-lisp
   (use-package json-mode :defer t)
