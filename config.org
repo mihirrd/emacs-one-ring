@@ -93,6 +93,28 @@ menu, to avoid clutter:
   (use-package minions
     :config (minions-mode))
 #+end_src
+** Minimap
+VSCode-style file overview on the right side showing the whole file and error positions.
+#+begin_src emacs-lisp
+  (use-package minimap
+    :custom
+    (minimap-window-location 'right)
+    (minimap-update-delay 0.2)
+    (minimap-minimum-width 15)
+    (minimap-width-fraction 0.1)
+    ;; Highlight errors/warnings from flycheck in the minimap
+    (minimap-highlight-line t)
+    :config
+    (add-hook 'find-file-hook
+              (lambda ()
+                (when (derived-mode-p 'prog-mode)
+                  (minimap-mode 1))))
+    ;; Overlay errors from flycheck onto the minimap
+    (add-hook 'flycheck-after-syntax-check-hook
+              (lambda ()
+                (when (and minimap-mode (minimap-get-window))
+                  (minimap-update t)))))
+#+end_src
 ** Themes
 #+begin_src emacs-lisp
   (use-package solo-jazz-theme :defer t)
