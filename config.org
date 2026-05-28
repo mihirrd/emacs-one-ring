@@ -115,6 +115,17 @@ VSCode-style file overview on the right side showing the whole file and error po
                 (when (and minimap-mode (minimap-get-window))
                   (minimap-update t)))))
 #+end_src
+** Olivetti
+Distraction-free writing mode: centers the buffer at a comfortable reading width and hides the fringes. Toggle with ~C-c o~.
+#+begin_src emacs-lisp
+  (use-package olivetti
+    :bind ("C-c o" . olivetti-mode)
+    :custom
+    (olivetti-body-width 100)
+    (olivetti-minimum-body-width 72)
+    (olivetti-recall-visual-line-mode-entry-state t))
+#+end_src
+
 ** Themes
 #+begin_src emacs-lisp
   (use-package solo-jazz-theme :defer t)
@@ -599,6 +610,14 @@ Open any "Project" in a separate Perspective, for easy organization.
     :defer t
     :bind ("C-x g" . magit-status))
 #+end_src
+** git-timemachine
+Step through a file's git history buffer-locally. ~p~/~n~ moves between revisions, ~q~ quits.
+#+begin_src emacs-lisp
+  (use-package git-timemachine
+    :defer t
+    :bind ("C-c g t" . git-timemachine))
+#+end_src
+
 ** Paredit
 #+begin_src emacs-lisp
   (use-package paredit
